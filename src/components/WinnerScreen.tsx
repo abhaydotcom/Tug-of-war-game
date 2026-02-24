@@ -5,6 +5,7 @@ type Props = {
   blueScore: number
   redName: string
   blueName: string
+  winner: string | null
   onRestart: () => void
 }
 
@@ -13,14 +14,11 @@ export default function WinnerScreen({
   blueScore,
   redName,
   blueName,
-  
+  winner,
   onRestart
 }: Props) {
 
-  let winner = "Draw 🤝"
-
-  if (redScore > blueScore) winner = redName
-  if (blueScore > redScore) winner = blueName
+  const result = winner ? winner : "Draw 🤝"
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-yellow-400 flex items-center justify-center">
@@ -34,7 +32,7 @@ export default function WinnerScreen({
         </h1>
 
         <h2 className="text-4xl font-bold text-green-600 mb-6">
-          {winner} Wins 🎉
+          {result} Wins 🎉
         </h2>
 
         <p className="text-xl mb-8">

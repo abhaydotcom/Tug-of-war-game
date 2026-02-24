@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import StartScreen from "./components/StartScreen"
 import Calculator from "./components/calculator"
-import { generateQuestion } from "../src/components/games/generateQuestion"
+import { generateQuestion } from "./components/games/generateQuestion"
 import { useTimer } from "./hooks/useTimer"
 import WinnerScreen from "./components/WinnerScreen"
 import TugArena from "./components/TugArena"
@@ -22,8 +22,8 @@ export default function App() {
   const [redScore, setRedScore] = useState(0)
   const [blueScore, setBlueScore] = useState(0)
 
-  const [redQ, setRedQ] = useState(generateQuestion(difficulty))
-  const [blueQ, setBlueQ] = useState(generateQuestion(difficulty))
+  const [redQ, setRedQ] = useState(() => generateQuestion("easy"))
+  const [blueQ, setBlueQ] = useState(() => generateQuestion("easy"))
 
   const [redInput, setRedInput] = useState("")
   const [blueInput, setBlueInput] = useState("")
@@ -41,9 +41,18 @@ export default function App() {
     setBlueScore(0)
     setTime(120)
     setGameOver(false)
+    setWinner(null)
+
+    setRedQ(generateQuestion(difficulty))
+    setBlueQ(generateQuestion(difficulty))
+
+    setRedInput("")
+    setBlueInput("")
   }
 
   useEffect(() => {
+
+    if (!started) return
 
     const diff = blueScore - redScore
 
@@ -57,11 +66,14 @@ export default function App() {
       setGameOver(true)
     }
 
-  }, [redScore, blueScore])
+  }, [redScore, blueScore, started, redName, blueName])
 
   useEffect(() => {
 
+    if (!started) return
+
     if (time === 0 && !gameOver) {
+
       if (redScore > blueScore) setWinner(redName)
       else if (blueScore > redScore) setWinner(blueName)
       else setWinner("Draw")
@@ -69,7 +81,7 @@ export default function App() {
       setGameOver(true)
     }
 
-  }, [time])
+  }, [time, gameOver, started, redScore, blueScore, redName, blueName])
 
   const check = (team: "red" | "blue") => {
 
@@ -79,14 +91,13 @@ export default function App() {
 
       if (Number(redInput) === redQ.answer) {
         setRedScore(s => s + 1)
-        setRedQ(generateQuestion(difficulty))
         setRedWrong(false)
       } else {
         setRedWrong(true)
         setTimeout(() => setRedWrong(false), 600)
-        setRedQ(generateQuestion(difficulty))
       }
 
+      setRedQ(generateQuestion(difficulty))
       setRedInput("")
     }
 
@@ -94,14 +105,13 @@ export default function App() {
 
       if (Number(blueInput) === blueQ.answer) {
         setBlueScore(s => s + 1)
-        setBlueQ(generateQuestion(difficulty))
         setBlueWrong(false)
       } else {
         setBlueWrong(true)
         setTimeout(() => setBlueWrong(false), 600)
-        setBlueQ(generateQuestion(difficulty))
       }
 
+      setBlueQ(generateQuestion(difficulty))
       setBlueInput("")
     }
   }
@@ -118,12 +128,12 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-200 px-4 py-6 flex flex-col items-center">
+    <div className="min-h-screen bg-gradient-to-b from-yellow-200 via-sky-200 to-purple-200 px-4 py-6 flex flex-col items-center">
 
       <div className="w-full max-w-6xl flex flex-col items-center gap-6">
 
         <h1 className="text-2xl md:text-4xl font-bold text-center">
-          ⏳ Time: {time}
+          ⏳ Time: {time}s
         </h1>
 
         <div className="
@@ -176,8 +186,8 @@ export default function App() {
           redScore={redScore}
           blueScore={blueScore}
           redName={redName}
-          blueName={blueName}
-          
+            blueName={blueName}
+          winner={winner}
           onRestart={restartGame}
         />
       )}
