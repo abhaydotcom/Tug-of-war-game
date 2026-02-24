@@ -177,7 +177,7 @@ export default function App() {
           blueScore={blueScore}
           redName={redName}
           blueName={blueName}
-          winner={winner}
+          
           onRestart={restartGame}
         />
       )}

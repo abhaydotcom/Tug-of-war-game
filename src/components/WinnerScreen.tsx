@@ -13,6 +13,7 @@ export default function WinnerScreen({
   blueScore,
   redName,
   blueName,
+  
   onRestart
 }: Props) {
 
